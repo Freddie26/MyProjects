@@ -1,17 +1,26 @@
 package web.contact.book.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import org.hibernate.validator.constraints.Length;
+
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
 public class ContactType {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Length(max = 255)
     private String type;
 
-    @Id
+    @OneToMany(mappedBy = "contactType", cascade = CascadeType.DETACH, orphanRemoval = false)
+    @Transient
+    private List<Contact> contacts = new ArrayList<>();
+
     public Long getId() {
         return id;
     }
@@ -28,17 +37,33 @@ public class ContactType {
         this.type = type;
     }
 
+    public List<Contact> getContacts() {
+        return contacts;
+    }
+
+    public void setContacts(List<Contact> contacts) {
+        this.contacts = contacts;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ContactType that = (ContactType) o;
-        return id == that.id &&
+        return id.equals(that.id) &&
                 Objects.equals(type, that.type);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, type);
+    }
+
+    @Override
+    public String toString() {
+        return "ContactType{" +
+                "id=" + id +
+                ", type='" + type + '\'' +
+                '}';
     }
 }

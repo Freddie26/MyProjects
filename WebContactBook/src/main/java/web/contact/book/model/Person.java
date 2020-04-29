@@ -1,23 +1,58 @@
 package web.contact.book.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import java.util.Objects;
+import org.hibernate.validator.constraints.Length;
 
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.List;
+import java.util.Set;
+
+/**
+ * Отображение таблицы Личность в виде POJO класса
+ */
 @Entity
 public class Person {
 
+    @Id
+    // автоинкрементируемое значение поля id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String first_name;
+    // задаём длину строки в БД
+    @Length(max = 80)
+    // поле автоматически мапится в колонку first_name
+    private String firstName;
 
-    private String last_name;
+    // задаём длину строки в БД
+    @Length(max = 80)
+    // поле автоматически мапится в last_name
+    private String lastName;
 
-    private String middle_name;
+    // задаём длину строки в БД
+    @Length(max = 80)
+    // поле автоматически мапится в middle_name
+    private String middleName;
 
+    // задаём явную длину колонки, хоть по умолчанию длина строки в БД 255 символов
+    @Length(max = 255)
     private String position;
 
-    @Id
+    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Contact> contacts = new HashSet<>();
+
+    public Person() {}
+
+    public Person(String firstName,
+                  String lastName,
+                  String middleName,
+                  String position) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.middleName = middleName;
+        this.position = position;
+    }
+
     public Long getId() {
         return id;
     }
@@ -26,28 +61,28 @@ public class Person {
         this.id = id;
     }
 
-    public String getFirst_name() {
-        return first_name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setFirst_name(String first_name) {
-        this.first_name = first_name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getLast_name() {
-        return last_name;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setLast_name(String last_name) {
-        this.last_name = last_name;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
-    public String getMiddle_name() {
-        return middle_name;
+    public String getMiddleName() {
+        return middleName;
     }
 
-    public void setMiddle_name(String middle_name) {
-        this.middle_name = middle_name;
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
     }
 
     public String getPosition() {
@@ -58,20 +93,40 @@ public class Person {
         this.position = position;
     }
 
+    public Set<Contact> getContacts() {
+        return contacts;
+    }
+
+    public void setContacts(Set<Contact> contacts) {
+        this.contacts = contacts;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Person person = (Person) o;
         return id == person.id &&
-                Objects.equals(first_name, person.first_name) &&
-                Objects.equals(last_name, person.last_name) &&
-                Objects.equals(middle_name, person.middle_name) &&
+                Objects.equals(firstName, person.firstName) &&
+                Objects.equals(lastName, person.lastName) &&
+                Objects.equals(middleName, person.middleName) &&
                 Objects.equals(position, person.position);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, first_name, last_name, middle_name, position);
+        return Objects.hash(id, firstName, lastName, middleName, position);
+    }
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", middleName='" + middleName + '\'' +
+                ", position='" + position + '\'' +
+                ", contacts=" + contacts +
+                '}';
     }
 }

@@ -1,18 +1,51 @@
 package web.contact.book.service;
 
+import org.springframework.stereotype.Service;
 import web.contact.book.model.Person;
+import web.contact.book.repository.PersonRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public interface PersonService {
+@Service
+public class PersonService {
 
-    List<Person> findAll();
+    private final PersonRepository personRepository;
 
-    Person findById(Long id);
+    public PersonService(PersonRepository personRepository) {
+        this.personRepository = personRepository;
+    }
 
-    void create(Person person);
+    public List<Person> findAll() {
+        List<Person> persons = new ArrayList<>();
+        personRepository.findAll()
+                .forEach(persons::add);
+        return persons;
+    }
 
-    boolean update(Person person, Long id);
+    public Person findById(Long id) {
+        return personRepository.findById(id)
+                .orElse(null);
+    }
 
-    boolean delete(Long id);
+    public void create(Person person) {
+        personRepository.save(person);
+    }
+
+    public boolean update(Person person, Long id) {
+        if (personRepository.existsById(id)) {
+            person.setId(id);
+            personRepository.save(person);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean delete(Long id) {
+        if (personRepository.existsById(id)) {
+            personRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
 }
