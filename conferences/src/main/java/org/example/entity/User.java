@@ -4,15 +4,9 @@ import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -29,18 +23,15 @@ public class User implements UserDetails {
 
     private String password;
 
-//    @Transient
-//    private String passwordConfirm;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    private Set<Role> roles;
+    @OneToOne(fetch = FetchType.EAGER)
+    private Role role;
 
     @ManyToMany
     private List<Presentation> presentations;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return getRoles();
+        return Collections.singleton(getRole());
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.example.controller;
 
 import lombok.AllArgsConstructor;
+import org.example.controller.dto.AuthUserDto;
 import org.example.controller.dto.UserDto;
 import org.example.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -20,12 +21,12 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<?> registerUser(@RequestBody UserDto userDto) {
-        if (!Objects.equals(userDto.getPassword(), userDto.getConfirmPassword())) {
+    public ResponseEntity<?> registerUser(@RequestBody AuthUserDto authUserDto) {
+        if (!Objects.equals(authUserDto.getPassword(), authUserDto.getConfirmPassword())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Пароли не совпадают");
         }
 
-        boolean userSaved = userService.saveUser(userDto);
+        boolean userSaved = userService.saveUser(authUserDto);
         return (userSaved)
                 ? ResponseEntity.status(HttpStatus.CREATED).build()
                 : ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Пользователь с таким именем уже существует");

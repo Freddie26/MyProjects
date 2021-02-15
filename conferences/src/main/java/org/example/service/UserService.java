@@ -1,30 +1,24 @@
 package org.example.service;
 
 import lombok.AllArgsConstructor;
-import org.example.controller.dto.UserDto;
+import org.apache.commons.lang3.StringUtils;
+import org.example.controller.dto.AuthUserDto;
 import org.example.entity.Role;
 import org.example.entity.User;
-import org.example.repository.RoleRepository;
 import org.example.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
 public class UserService implements UserDetailsService {
 
-    @PersistenceContext
-    private final EntityManager em;
+    private final Set<String> ALL_ROLES = new HashSet<>(Arrays.asList("ROLE_LISTENER", "ROLE_PRESENTER"));
 
     private final UserRepository userRepository;
 
@@ -41,20 +35,20 @@ public class UserService implements UserDetailsService {
                 .orElse(new User());
     }
 
-    public List<User> allUsers() {
-        return userRepository.findAll();
-    }
-
-    public boolean saveUser(UserDto userDto) {
+    public boolean saveUser(AuthUserDto userDto) {
         Optional<User> optUser = userRepository.findByUsername(userDto.getUsername());
         if (optUser.isPresent()) {
             return false;
         }
 
+        String roleName = StringUtils.isNotEmpty(userDto.getRole()) && ALL_ROLES.contains(userDto.getRole())
+                ? userDto.getRole()
+                : "ROLE_USER";
+
         User user = new User();
         user.setUsername(userDto.getUsername());
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        user.setRoles(Collections.singleton(new Role(1L, "ROLE_USER")));
+        user.setRoles(Collections.singleton(new Role(roleName)));
         userRepository.save(user);
 
         return true;
@@ -66,10 +60,5 @@ public class UserService implements UserDetailsService {
             return true;
         }
         return false;
-    }
-
-    public List<User> usergtList(Long idMin) {
-        return em.createQuery("SELECT u FROM User u WHERE u.id > :paramId", User.class)
-                .setParameter("paramId", idMin).getResultList();
     }
 }
