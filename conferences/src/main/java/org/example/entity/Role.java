@@ -1,7 +1,7 @@
 package org.example.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -9,16 +9,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import java.util.Set;
 
 @Data
 @Entity
-@Table(name = "roles")
-@AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
 public class Role implements GrantedAuthority {
 
     public Role(String name) {
@@ -32,7 +30,7 @@ public class Role implements GrantedAuthority {
     private String name;
 
     @Transient
-    @ManyToMany(mappedBy = "roles")
+    @OneToMany(mappedBy = "role")
     private Set<User> users;
 
     @Override

@@ -13,10 +13,4 @@ public class AuthUserDto {
 
     @JsonProperty(value = "Password")
     private String password;
-
-    @JsonProperty(value = "ConfirmPassword")
-    private String confirmPassword;
-
-    @JsonProperty(value = "Role")
-    private String role;
 }

@@ -1,12 +1,10 @@
 package org.example.conf;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @EnableWebSecurity
@@ -16,19 +14,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf().disable()
                 .authorizeRequests()
-                    .antMatchers("/admin/**").hasRole("ADMIN")
-                    .antMatchers("/news").hasRole("USER")
-                    .antMatchers("/", "/resources/**").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                    .formLogin()
-                    .loginPage("/login")
-                    .defaultSuccessUrl("/")
+                    .antMatchers("/users/register", "/presentations/all").permitAll()
+                    .antMatchers("/register-to-presentation/*").hasRole("LISTENER")
+                    .antMatchers("/presentations/**").hasRole("PRESENTER")
+                    .antMatchers("/users", "/users/make-presenter/*").hasRole("ADMIN")
+                    .antMatchers("/", "/login").permitAll().anyRequest().authenticated()
+                    .and()
+                .formLogin()
+                    .and()
+                .logout()
                     .permitAll()
-                .and()
-                    .logout()
-                    .permitAll()
-                    .logoutSuccessUrl("/");
+                    .logoutSuccessUrl("/login");
     }
 
     @Bean

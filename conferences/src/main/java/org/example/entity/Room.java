@@ -1,26 +1,25 @@
 package org.example.entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.OneToOne;
 
 @Data
 @Entity
-@Table(name = "rooms")
+@EqualsAndHashCode
 public class Room {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String building;
-
-    private Integer floor;
-
     private String number;
+
+    @OneToOne(mappedBy = "room")
+    private Schedule schedule;
 }

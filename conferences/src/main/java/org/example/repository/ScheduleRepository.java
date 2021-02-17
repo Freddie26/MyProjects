@@ -1,7 +1,13 @@
 package org.example.repository;
 
-import org.example.entity.Timetable;
-import org.springframework.data.repository.CrudRepository;
+import org.example.entity.Schedule;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface ScheduleRepository extends CrudRepository<Timetable, Long> {
+import java.util.Optional;
+
+@Repository
+public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
+
+    Optional<Schedule> findByPresentationId(Long presentationId);
 }
