@@ -1,0 +1,17 @@
+server:
+    port: 8080
+spring:
+    application:
+        name: conference-service
+    datasource:
+        driver-class-name: org.postgresql.Driver
+        hikari:
+            maximum-pool-size: 285
+        url: jdbc:postgresql://host.docker.internal:5432/conference
+        username: postgres
+        password: postgres
+    jpa:
+        show-sql: true
+    liquibase:
+        enabled: true
+        change-log: classpath:database/rootChangeLog.xml
